@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require("bcrypt");
 const UserDataProfile = require("../../models").UserDataProfile;
 
 // GET all user data profiles
@@ -28,7 +29,7 @@ router.get("/:userId", async (req, res) => {
 
 // POST a new user data profile
 router.post("/", async (req, res) => {
-  const { name, email, address, phoneNumber } = req.body;
+  const { name, email, address, phoneNumber, password } = req.body;
 
   try {
     const newUserProfile = await UserDataProfile.create({
@@ -36,6 +37,7 @@ router.post("/", async (req, res) => {
       email,
       address,
       phoneNumber,
+      password,
     });
     res.status(201).json(newUserProfile);
   } catch (err) {
@@ -58,6 +60,29 @@ router.put("/:userId", async (req, res) => {
 
       await profile.save();
       res.json(profile);
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// PUT (update) user password
+router.put("/:userId/password", async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  try {
+    const profile = await UserDataProfile.findByPk(req.params.userId);
+    if (profile) {
+      const isMatch = await bcrypt.compare(oldPassword, profile.password);
+      if (isMatch) {
+        profile.password = newPassword;
+        await profile.save();
+        res.json({ message: "Password updated successfully" });
+      } else {
+        res.status(400).json({ message: "Old password is incorrect" });
+      }
     } else {
       res.status(404).json({ message: "User not found" });
     }

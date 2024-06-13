@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 module.exports = (sequelize, DataTypes) => {
   const UserDataProfile = sequelize.define("UserDataProfile", {
     userId: {
@@ -23,6 +25,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  });
+
+  UserDataProfile.beforeCreate(async (user) => {
+    user.password = await bcrypt.hash(user.password, 10);
+  });
+
+  UserDataProfile.beforeUpdate(async (user) => {
+    if (user.changed("password")) {
+      user.password = await bcrypt.hash(user.password, 10);
+    }
   });
 
   return UserDataProfile;

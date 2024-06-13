@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
     email: user.email,
   };
   const token = jwt.sign({ data }, "asdasda", {
-    expiresIn: "10s",
+    expiresIn: "1d",
   });
 
   return res.json({ token });
