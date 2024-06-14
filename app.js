@@ -7,7 +7,6 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var authRouter = require("./routes/auth");
 var diseaseRoutes = require("./routes/handlers/diseases");
-var historyPredictionRoutes = require("./routes/handlers/historyPredictions");
 var userDataProfileRoutes = require("./routes/handlers/userDataProfiles");
 
 var app = express();
@@ -22,7 +21,6 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/diseases", diseaseRoutes);
-app.use("/history-predictions", historyPredictionRoutes);
 app.use("/user-data-profiles", userDataProfileRoutes);
 
 // catch 404 and forward to error handler
